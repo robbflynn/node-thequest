@@ -34,32 +34,6 @@ module.exports = function(data, scene, geometry, materials, light, marker){
   this.light2.position.z = 20; 
   this.body.add( this.light2 );
 
-  /*var geometry = new THREE.Geometry();
-  var sprite = THREE.ImageUtils.loadTexture( "textures/snowflake4.png" );
-
-  for ( i = 0; i < 150; i ++ ) {
-
-    var vertex = new THREE.Vector3();
-    vertex.x = Math.random() * 60 - 30;
-    vertex.y = Math.random() * 30 - 15;
-    vertex.z = Math.random() * 30 - 15;
-
-    geometry.vertices.push( vertex );
-
-  }
-
-  this.color = [0.80, 0, 0.15];
-
-  this.particlesMaterial = new THREE.ParticleBasicMaterial( { size: 35, map: sprite, blending: THREE.AdditiveBlending, transparent : true } );
-  this.particlesMaterial.color.setHSV(this.color[0], this.color[1], this.color[2]);
-
-  this.particles = new THREE.ParticleSystem( geometry, this.particlesMaterial );
-  this.particles.position.y = 15;
-  this.particles.position.z = -15;
-
-
-
-  this.model.add(this.particles);*/
   this.model.add(this.body);
   this.scene.add( this.model );
 
@@ -100,29 +74,6 @@ _.extend(module.exports.prototype, {
     var mx = this.model.position.x - (this.x - 400);
     var my = this.model.position.z - (this.y - 300);
 
-    /*var d = Math.sqrt((mx * mx) + (my * my));
-
-    if (d > 1 && this.phase == 0)
-      this.phase += 20;
-
-    if (this.phase != 0)
-    {
-      this.phase = this.phase + 20 > 360 ? 0 : this.phase + 20;
-      this.body.rotation.y = 25 * (Math.PI / 180) * Math.sin(this.phase * Math.PI / 180) * (d / 20);
-      this.body.rotation.z = 15 * (Math.PI / 180) * Math.sin(this.phase * Math.PI / 180) * (d / 20);
-
-      var time = Date.now() * 0.005;
-
-      this.particles.rotation.x = time * ( i < 4 ? i + 1 : - ( i + 1 ) ); // Math.random() * 360 * (Math.PI / 180);
-      this.particles.scale.x = 0.01 + (d / 20);
-      this.particles.scale.y = this.particles.scale.x;
-      this.particles.scale.z = this.particles.scale.x;
-      this.particlesMaterial.color.setHSV( h, 0.2, 1);
-
-      h = ( 360 * ( this.color[0] + time ) % 360 ) / 360;
-      this.particlesMaterial.color.setHSV( h, this.color[1], this.color[2] );
-    }*/
-
     this.model.position.x = this.x - 400;
     this.model.position.z = this.y - 300;
 
@@ -132,6 +83,8 @@ _.extend(module.exports.prototype, {
 
       this.marker.position.x = this.x - 400;
       this.marker.position.z = this.y - 300;  
+
+      this.marker.rotation.x += 0.05;
     }
 
     if (this.light2.visible != this.hasTreasure && this.hasTreasure) {
