@@ -12,14 +12,17 @@ module.exports = function(data, scene, geometry, materials, light){
 
   console.log("Palyer3D", scene, geometry, materials, light);
 
-  for (var s in materials)
-    if (materials[s].name == "02_-_Default")
-    {
+  for (var s in materials) {
+    console.log("--- Palyer3D-Material ---", materials[s].name);
+    if (materials[s].name == "02___Default"){
+      
+
       var n = materials[s].name;
 
       materials[s] = new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } );
       materials[s].name = n;
     }
+  }
       
 
   this.body = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial( materials ));
@@ -63,6 +66,12 @@ module.exports = function(data, scene, geometry, materials, light){
   this.model.add(this.particles);
   this.model.add(this.body);
   this.scene.add( this.model );
+
+  this.model.scale.x = 0.000001;
+  this.model.scale.y = 0.000001;
+  this.model.scale.z = 0.000001;
+
+  TweenLite.to(this.model.scale, 1, {x: 1, y: 1, z: 1, delay: 0.5, ease: Elastic.easeOut});
 }
 
 _.extend(module.exports.prototype, {
