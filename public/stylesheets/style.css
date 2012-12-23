@@ -77,4 +77,5 @@ a {
   margin: 0 auto;
   position: absolute;
   text-align: center;
+  display: none;
 }

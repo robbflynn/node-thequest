@@ -29,8 +29,6 @@ var Preloader = function() {
   }
 }
 
-$(".support").hide();
-
 var webgl = ( function () { try { return !! window.WebGLRenderingContext && !! document.createElement( 'canvas' ).getContext( 'experimental-webgl' ); } catch( e ) { return false; } } )();
 
 console.log("Detector", webgl);
@@ -304,7 +302,7 @@ if (webgl) {
     TweenLite.to(camera.rotation, 1, {x: 0, delay: 0.2, ease: Cubic.easeInOut});
 
     TweenLite.to(paravan3D.scale, 1, {x: 600, y: 600, z: 600, delay: 0.2, ease: Cubic.easeInOut, onComplete: function() {
-      
+
       var socket = io.connect(require("config").socketio);
 
       socket.on("registered", function(){
