@@ -1,9 +1,10 @@
-module.exports = function(data, scene, geometry, materials, light, marker){
+module.exports = function(data, scene, geometry, materials, light, marker, sounds){
   _.extend(this, data);
 
   this.scene = scene;
   this.light = light;
   this.marker = marker;
+  this.sounds = sounds;
 
   this.phase = 0;
 
@@ -88,6 +89,10 @@ _.extend(module.exports.prototype, {
     }
 
     if (this.light2.visible != this.hasTreasure && this.hasTreasure) {
+
+      if (this.sounds.enabled)
+        this.sounds.trapped.play();
+
       this.marker.scale.set( 0.00001, 0.00001, 0.00001 );
       TweenLite.to(this.marker.scale, 0.2, {x: 1, y: 1, z: 1, ease: Cubic.easeOut});
     }

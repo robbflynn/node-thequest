@@ -37,6 +37,7 @@ var sounds = {
   enabled: true,
   trapped: new Audio("sounds/trap.wav"),
   start: new Audio("sounds/start.wav"),
+  song1: new Audio("sounds/song1.mp3"),
   win: [
     new Audio("sounds/yahoo1.wav"),
     new Audio("sounds/yahoo2.wav"),
@@ -50,6 +51,8 @@ var sounds = {
     new Audio("sounds/ouch.wav")
   ]
 }
+
+sounds.song1.loop = true;
 
 var webgl = ( function () { try { return !! window.WebGLRenderingContext && !! document.createElement( 'canvas' ).getContext( 'experimental-webgl' ); } catch( e ) { return false; } } )();
 
@@ -301,7 +304,7 @@ if (webgl) {
   var addOrUpdate = function(playerData){
     var player = getPlayerById(playerData.playerId);
     if(!player) {
-      player = new Player(playerData, gameContainer3d, showmanGeometry, showmanMaterial, light2, marker3D);
+      player = new Player(playerData, gameContainer3d, showmanGeometry, showmanMaterial, light2, marker3D, sounds);
       players.push(player);
       gameContainer3d.add(player.model);
     } else {
@@ -382,7 +385,7 @@ if (webgl) {
         } else {
           if (sounds.enabled)
             sounds.lose[rand(0, sounds.lose.length)].play();
-          
+
           TweenLite.to(loseText3D.position, 1.5, {y: 10, ease: Bounce.easeOut});
         }
           
@@ -433,10 +436,13 @@ if (webgl) {
       $(".soundToggle").click(function(e){
         e.preventDefault();
         sounds.enabled = !sounds.enabled;
-        if(sounds.enabled)
+        if(sounds.enabled){
+          sounds.song1.play();
           $(".soundToggle").text("Toggle sound off");
-        else
+        } else {
+          sounds.song1.pause();
           $(".soundToggle").text("Toggle sound on");
+        }
       });
     }});
 
@@ -447,8 +453,9 @@ if (webgl) {
   var _self = this;
 
   preloader.complete = function() {
-    TweenLite.to($(".landingImg"), 1, {css:{opacity:0}, onComplete: function() {
+    TweenLite.to($(".landingImg"), 1, {css:{opacity:0}, delay: 1, onComplete: function() {
       $(".landingImg").hide();
+      sounds.song1.play();
       startGame();    
     }});
   }
