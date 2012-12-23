@@ -84,7 +84,7 @@ _.extend(module.exports.prototype, {
       this.marker.position.x = this.x - 400;
       this.marker.position.z = this.y - 300;  
 
-      this.marker.rotation.x += 0.05;
+      this.marker.rotation.z += 0.05;
     }
 
     if (this.light2.visible != this.hasTreasure && this.hasTreasure) {
