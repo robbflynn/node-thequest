@@ -5,7 +5,11 @@ require("./vendor/plugins/CSSPlugin.min");
 require("./vendor/easing/EasePack.min");
 
 var Player = require("./views/Player3D");
-var players = [];
+
+var playersById = [];
+var playersByUsername = [];
+
+var totalPlayers = 0;
 
 var Preloader = function() {
   this.total = 0;
@@ -136,6 +140,8 @@ if (webgl) {
   var marker;
   var marker3D;
 
+  var snowmans = [];
+
   var systems = [];
   var materials = [];
   var parameters;
@@ -248,11 +254,42 @@ if (webgl) {
   };
 
 
-  var callbackSnowman = function ( geometry, materials ) {
+  var callbackSnowman1 = function ( geometry, materials ) {
     showmanGeometry = geometry;
     showmanMaterial = materials;
 
-    console.log(materials);
+    snowmans[0] = {
+      geometry: geometry,
+      materials: materials
+    };
+  };
+
+  var callbackSnowman2 = function ( geometry, materials ) {
+    snowmans[1] = {
+      geometry: geometry,
+      materials: materials
+    };
+  };
+
+  var callbackSnowman3 = function ( geometry, materials ) {
+    snowmans[2] = {
+      geometry: geometry,
+      materials: materials
+    };
+  };
+
+  var callbackSnowman4 = function ( geometry, materials ) {
+    snowmans[3] = {
+      geometry: geometry,
+      materials: materials
+    };
+  };
+
+  var callbackSnowman5 = function ( geometry, materials ) {
+    snowmans[4] = {
+      geometry: geometry,
+      materials: materials
+    };
   };
 
   var callbackParavan = function ( geometry, materials ) {
@@ -273,39 +310,36 @@ if (webgl) {
 
     var loader = new THREE.JSONLoader();
     loader.load( "models/world.js", preloader.listen(callbackWorld), "textures");
-
-    loader = new THREE.JSONLoader();
     loader.load( "models/win-text.js", preloader.listen(callbackWinText), "textures");
-
-    loader = new THREE.JSONLoader();
     loader.load( "models/lose-text.js", preloader.listen(callbackLoseText), "textures");
-
-    loader = new THREE.JSONLoader();
-    loader.load("models/snowman1.js", preloader.listen(callbackSnowman), "textures");  
-
-    loader = new THREE.JSONLoader();
+    loader.load("models/snowman1.js", preloader.listen(callbackSnowman1), "textures");  
+    loader.load("models/snowman2.js", preloader.listen(callbackSnowman2), "textures");  
+    loader.load("models/snowman3.js", preloader.listen(callbackSnowman3), "textures");
+    loader.load("models/snowman4.js", preloader.listen(callbackSnowman4), "textures");  
+    loader.load("models/snowman5.js", preloader.listen(callbackSnowman5), "textures");  
     loader.load("models/paravan.js", preloader.listen(callbackParavan), "textures");
   });
 
   $(".gameWorld").append(renderer.domElement);
 
-  var getPlayerById = function(playerId){
-    for(var i = 0; i<players.length; i++)
-      if(players[i].playerId == playerId)
-        return players[i];
-  }
-
-  var getPlayerByUsername = function(username){
-    for(var i = 0; i<players.length; i++)
-      if(players[i].username == username)
-        return players[i]; 
-  }
-
   var addOrUpdate = function(playerData){
-    var player = getPlayerById(playerData.playerId);
+    var player = playersById[playerData.playerId]; // getPlayerById(playerData.playerId);
     if(!player) {
-      player = new Player(playerData, gameContainer3d, showmanGeometry, showmanMaterial, light2, marker3D, sounds);
-      players.push(player);
+      var index = totalPlayers - parseInt(totalPlayers / snowmans.length) * snowmans.length;
+
+
+      console.log("1.addOrUpdate:", index);
+
+      var g = snowmans[index].geometry;
+      var m = snowmans[index].materials;
+      console.log("2.addOrUpdate:", g, m);
+      player = new Player(playerData, gameContainer3d, g, m, light2, marker3D, sounds);
+
+      totalPlayers ++;
+
+      playersById[playerData.playerId] = player;
+      playersByUsername[playerData.username] = player;
+
       gameContainer3d.add(player.model);
     } else {
       _.extend(player, playerData);
@@ -357,8 +391,13 @@ if (webgl) {
       });
 
       socket.on("removePlayer", function(playerData){
-        var p = getPlayerById(playerData.playerId);
-        players.splice(players.indexOf(p), 1);
+        var p = playersById[playerData.playerId]; //getPlayerById(playerData.playerId);
+
+        totalPlayers --;
+
+        delete(playersById[playerData.playerId]);
+        delete(playersByUsername[playerData.username]);
+
         p.remove();
       });
 
@@ -371,9 +410,9 @@ if (webgl) {
       });
 
       socket.on("treasureTrapped", function(p1Data, p2Data){
-        _.extend(getPlayerById(p1Data.playerId), p1Data).render();
+        _.extend(playersById(p1Data.playerId), p1Data).render();
         if(p2Data)
-          _.extend(getPlayerById(p2Data.playerId), p2Data).render();
+          _.extend(playersById(p2Data.playerId), p2Data).render();
       })
 
       socket.on("endgame", function (victory) {
@@ -389,7 +428,7 @@ if (webgl) {
           TweenLite.to(loseText3D.position, 1.5, {y: 10, ease: Bounce.easeOut});
         }
           
-        var player = getPlayerByUsername(user.username);
+        var player = playersByUsername[user.username]; //getPlayerByUsername(user.username);
         player.victories += victory ? 1 : 0;
 
         $(".victoriesCount").html(player.victories);
@@ -401,10 +440,14 @@ if (webgl) {
 
         //sounds.start.play();
 
-        for (var i = 0;i < players.length;i ++)
-          gameContainer3d.remove(players[i].model);
+        for (var s in playersById)
+          gameContainer3d.remove(playersById[s].model);
 
-        players = [];
+        totalPlayers = 0;
+
+        playersById = [];
+        playersByUsername = [];
+
         socket.emit("addPlayer");
       });
 

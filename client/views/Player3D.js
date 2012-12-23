@@ -78,6 +78,19 @@ _.extend(module.exports.prototype, {
     this.model.position.x = this.x - 400;
     this.model.position.z = this.y - 300;
 
+
+    var d = Math.sqrt((mx * mx) + (my * my));
+
+    if (d > 1 && this.phase == 0)
+      this.phase += 20;
+
+    if (this.phase != 0)
+    {
+      this.phase = this.phase + 20 > 360 ? 0 : this.phase + 20;
+      this.body.rotation.y = 25 * (Math.PI / 180) * Math.sin(this.phase * Math.PI / 180) * (d / 20);
+      this.body.rotation.z = 15 * (Math.PI / 180) * Math.sin(this.phase * Math.PI / 180) * (d / 20);
+    }
+
     if (this.hasTreasure) {
       this.light.position.x = this.x - 400;
       this.light.position.z = this.y - 300;  
