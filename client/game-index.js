@@ -29,6 +29,28 @@ var Preloader = function() {
   }
 }
 
+var rand = function(LowerRange, UpperRange){
+  return Math.floor(Math.random() * (UpperRange - LowerRange + 1)) + LowerRange;
+}
+
+var sounds = {
+  enabled: true,
+  trapped: new Audio("sounds/trap.wav"),
+  start: new Audio("sounds/start.wav"),
+  win: [
+    new Audio("sounds/yahoo1.wav"),
+    new Audio("sounds/yahoo2.wav"),
+    new Audio("sounds/yeahaw1.wav"),
+    new Audio("sounds/yeahaw2.wav"),
+    new Audio("sounds/yeahaw3.wav"),
+    new Audio("sounds/yow.wav")
+  ],
+  lose: [
+    new Audio("sounds/oooo.wav"),
+    new Audio("sounds/ouch.wav")
+  ]
+}
+
 var webgl = ( function () { try { return !! window.WebGLRenderingContext && !! document.createElement( 'canvas' ).getContext( 'experimental-webgl' ); } catch( e ) { return false; } } )();
 
 console.log("Detector", webgl);
@@ -352,11 +374,18 @@ if (webgl) {
       })
 
       socket.on("endgame", function (victory) {
-        if (victory)
-          TweenLite.to(winText3D.position, 1.5, {y: 10, ease: Bounce.easeOut});
-        else
-          TweenLite.to(loseText3D.position, 1.5, {y: 10, ease: Bounce.easeOut});
+        if (victory) {
+          if (sounds.enabled)
+            sounds.win[rand(0,sounds.win.length)].play();
 
+          TweenLite.to(winText3D.position, 1.5, {y: 10, ease: Bounce.easeOut});
+        } else {
+          if (sounds.enabled)
+            sounds.lose[rand(0, sounds.lose.length)].play();
+          
+          TweenLite.to(loseText3D.position, 1.5, {y: 10, ease: Bounce.easeOut});
+        }
+          
         var player = getPlayerByUsername(user.username);
         player.victories += victory ? 1 : 0;
 
@@ -366,6 +395,8 @@ if (webgl) {
       socket.on("restart", function(){
         TweenLite.to(winText3D.position, 1, {y: 1000, ease: Cubic.easeIn});
         TweenLite.to(loseText3D.position, 1, {y: 1000, ease: Cubic.easeIn});
+
+        //sounds.start.play();
 
         for (var i = 0;i < players.length;i ++)
           gameContainer3d.remove(players[i].model);
@@ -397,6 +428,15 @@ if (webgl) {
       $(window).on("keyup", function(e){
         e.preventDefault();
         socket.emit("directionChange", false, direction(e));
+      });
+
+      $(".soundToggle").click(function(e){
+        e.preventDefault();
+        sounds.enabled = !sounds.enabled;
+        if(sounds.enabled)
+          $(".soundToggle").text("Toggle sound off");
+        else
+          $(".soundToggle").text("Toggle sound on");
       });
     }});
 

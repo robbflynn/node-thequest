@@ -3,11 +3,12 @@ extends layout
 block content
   .title TheQuest
   .menu
-    a(href="/users/logout") logout
     .timeLeft.menuItem
     .victories.menuItem
       | Victories: 
       span.victoriesCount 0
+    a(href="javascript: void(0)").soundToggle.menuItem Toggle sound off 
+    a(href="/users/logout").menuItem  logout
   .landingImg
     .support
       p Your browser does not support WebGL or it's disabled.
