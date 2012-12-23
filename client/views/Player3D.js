@@ -1,8 +1,9 @@
-module.exports = function(data, scene, geometry, materials, light){
+module.exports = function(data, scene, geometry, materials, light, marker){
   _.extend(this, data);
 
   this.scene = scene;
   this.light = light;
+  this.marker = marker;
 
   this.phase = 0;
 
@@ -10,10 +11,7 @@ module.exports = function(data, scene, geometry, materials, light){
 
   materials = [].concat(materials);
 
-  console.log("Palyer3D", scene, geometry, materials, light);
-
   for (var s in materials) {
-    console.log("--- Palyer3D-Material ---", materials[s].name);
     if (materials[s].name == "02___Default"){
       
 
@@ -36,9 +34,7 @@ module.exports = function(data, scene, geometry, materials, light){
   this.light2.position.z = 20; 
   this.body.add( this.light2 );
 
-  console.log(this.body);
-
-  var geometry = new THREE.Geometry();
+  /*var geometry = new THREE.Geometry();
   var sprite = THREE.ImageUtils.loadTexture( "textures/snowflake4.png" );
 
   for ( i = 0; i < 150; i ++ ) {
@@ -63,7 +59,7 @@ module.exports = function(data, scene, geometry, materials, light){
 
 
 
-  this.model.add(this.particles);
+  this.model.add(this.particles);*/
   this.model.add(this.body);
   this.scene.add( this.model );
 
@@ -76,7 +72,6 @@ module.exports = function(data, scene, geometry, materials, light){
 
 _.extend(module.exports.prototype, {
   render: function(){
-    this.light2.visible = this.hasTreasure;  
 
     if (this.directions.left && this.directions.top)
        this.model.rotation.y =  -135 * (Math.PI / 180);
@@ -105,7 +100,7 @@ _.extend(module.exports.prototype, {
     var mx = this.model.position.x - (this.x - 400);
     var my = this.model.position.z - (this.y - 300);
 
-    var d = Math.sqrt((mx * mx) + (my * my));
+    /*var d = Math.sqrt((mx * mx) + (my * my));
 
     if (d > 1 && this.phase == 0)
       this.phase += 20;
@@ -126,7 +121,7 @@ _.extend(module.exports.prototype, {
 
       h = ( 360 * ( this.color[0] + time ) % 360 ) / 360;
       this.particlesMaterial.color.setHSV( h, this.color[1], this.color[2] );
-    }
+    }*/
 
     this.model.position.x = this.x - 400;
     this.model.position.z = this.y - 300;
@@ -134,7 +129,17 @@ _.extend(module.exports.prototype, {
     if (this.hasTreasure) {
       this.light.position.x = this.x - 400;
       this.light.position.z = this.y - 300;  
+
+      this.marker.position.x = this.x - 400;
+      this.marker.position.z = this.y - 300;  
     }
+
+    if (this.light2.visible != this.hasTreasure && this.hasTreasure) {
+      this.marker.scale.set( 0.00001, 0.00001, 0.00001 );
+      TweenLite.to(this.marker.scale, 0.2, {x: 1, y: 1, z: 1, ease: Cubic.easeOut});
+    }
+
+    this.light2.visible = this.hasTreasure;
 
     return this;
   },

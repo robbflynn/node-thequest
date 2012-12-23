@@ -108,6 +108,9 @@ if (webgl) {
   var sprite4;
   var sprite5;
 
+  var marker;
+  var marker3D;
+
   var systems = [];
   var materials = [];
   var parameters;
@@ -158,6 +161,17 @@ if (webgl) {
       scene.add( particles );
       systems.push(particles);
     }
+
+    var mats = [
+          new THREE.MeshBasicMaterial( { map: marker, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthTest: true, transparent: true } )
+        ];
+
+    marker3D = THREE.SceneUtils.createMultiMaterialObject( new THREE.PlaneGeometry( 70, 70, 4, 4 ), mats );
+    marker3D.position.set( 0, 10, 0 );
+    marker3D.rotation.x = 90 * (Math.PI / 180);;
+    marker3D.scale.set( 0.00001, 0.00001, 0.00001 );
+
+    stageContainer3d.add( marker3D );
   }
 
   var renderParticles = function() {
@@ -230,6 +244,8 @@ if (webgl) {
     sprite4 = THREE.ImageUtils.loadTexture( "textures/snowflake4.png", null, preloader.listen());
     sprite5 = THREE.ImageUtils.loadTexture( "textures/snowflake5.png", null, preloader.listen());
 
+    marker = THREE.ImageUtils.loadTexture( "textures/marker.png", null, preloader.listen());
+
     var loader = new THREE.JSONLoader();
     loader.load( "models/world.js", preloader.listen(callbackWorld), "textures");
 
@@ -263,7 +279,7 @@ if (webgl) {
   var addOrUpdate = function(playerData){
     var player = getPlayerById(playerData.playerId);
     if(!player) {
-      player = new Player(playerData, gameContainer3d, showmanGeometry, showmanMaterial, light2);
+      player = new Player(playerData, gameContainer3d, showmanGeometry, showmanMaterial, light2, marker3D);
       players.push(player);
       gameContainer3d.add(player.model);
     } else {
