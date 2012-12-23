@@ -10,6 +10,8 @@ module.exports = function(data, scene, geometry, materials, light){
 
   materials = [].concat(materials);
 
+  console.log("Palyer3D", scene, geometry, materials, light);
+
   for (var s in materials)
     if (materials[s].name == "02_-_Default")
     {
@@ -17,7 +19,6 @@ module.exports = function(data, scene, geometry, materials, light){
 
       materials[s] = new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } );
       materials[s].name = n;
-      console.log("-----COLOR-------", materials[s].color);
     }
       
 

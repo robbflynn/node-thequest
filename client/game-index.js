@@ -2,16 +2,11 @@ _ = require("./vendor/underscore");
 var socket = io.connect(require("config").socketio);
 
 require("./vendor/TweenLite.min");
+require("./vendor/plugins/CSSPlugin.min");
 require("./vendor/easing/EasePack.min");
-
-
-//var Stats = require("./vendor/stats.min");
-//console.log("###:", Stats);monitor
-
 
 var Player = require("./views/Player3D");
 var players = [];
-
 
 var Preloader = function() {
   this.total = 0;
@@ -22,11 +17,9 @@ var Preloader = function() {
   this.complete = null;
   this.listen = function(fn) {
     _self.total ++; 
-    console.log("listen:", _self.total);
+    
     return function() {
       _self.loaded ++;
-
-      console.log("listenComplete:", _self.loaded, arguments);
 
       if (fn)
         fn.apply(null, arguments);
@@ -37,19 +30,14 @@ var Preloader = function() {
   }
 }
 
-
-
 var ww = window.innerWidth;
 var hh = window.innerHeight;
 
 var camera = new THREE.PerspectiveCamera(45, ww / hh, 0.1, 100000);
 camera.position.z = 2600;
-//camera.position.y = 400;
 
 var scene = new THREE.Scene();
-//scene.fog = new THREE.FogExp2( 0x000000, 0.0008 );
-
-scene.add( new THREE.AmbientLight( 0x2b3132 ) );
+scene.add( new THREE.AmbientLight( 0x3a4d55 ) );
 
 var light = new THREE.SpotLight( 0xffffff, 1.5 );
 light.position.set( 0, 500, 2000 );
@@ -88,10 +76,6 @@ stageContainer3d.rotation.x = 45 * (Math.PI / 180);
 stageContainer3d.add(gameContainer3d);
 scene.add(stageContainer3d);
 
-/*plane = new THREE.Mesh( new THREE.PlaneGeometry( 800, 600, 8, 8 ), new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ));
-plane.position.z = -20;
-stageContainer3d.add( plane );*/
-
 var starLight = new THREE.PointLight( 0xfff58a, 3, 700 ); 
 starLight.position.x = -120; 
 starLight.position.y = 300; 
@@ -110,11 +94,15 @@ gameContainer3d.add( light2 );
 
 var world3d;
 
-var sprite1 = THREE.ImageUtils.loadTexture( "textures/snowflake1.png", null, preloader.listen());
-var sprite2 = THREE.ImageUtils.loadTexture( "textures/snowflake2.png", null, preloader.listen());
-var sprite3 = THREE.ImageUtils.loadTexture( "textures/snowflake3.png", null, preloader.listen());
-var sprite4 = THREE.ImageUtils.loadTexture( "textures/snowflake4.png", null, preloader.listen());
-var sprite5 = THREE.ImageUtils.loadTexture( "textures/snowflake5.png", null, preloader.listen());
+var winText3D;
+var loseText3D;
+var paravan3D;
+
+var sprite1;
+var sprite2;
+var sprite3;
+var sprite4;
+var sprite5;
 
 var systems = [];
 var materials = [];
@@ -155,6 +143,7 @@ function initParticles() {
 
     materials[i] = new THREE.ParticleBasicMaterial( { size: size, map: sprite, blending: THREE.AdditiveBlending, depthTest: false, transparent : true } );
     materials[i].color.setHSV( color[0], color[1], color[2] );
+    materials[i].opacity = 0;
 
     particles = new THREE.ParticleSystem( geometry, materials[i] );
 
@@ -165,13 +154,6 @@ function initParticles() {
     scene.add( particles );
     systems.push(particles);
   }
-
-  //console.log("Stats", Stats);
-
-  /*stats = new require("./vendor/stats.min");
-  stats.domElement.style.position = 'absolute';
-  stats.domElement.style.top = '0px';
-  container.appendChild( stats.domElement );*/
 }
 
 var renderParticles = function() {
@@ -185,8 +167,80 @@ var renderParticles = function() {
 
     h = ( 360 * ( color[0] + time ) % 360 ) / 360;
     materials[i].color.setHSV( h, color[1], color[2] );
+
+    if (materials[i].opacity < 1)
+      materials[i].opacity += 0.02;
   }
 }
+
+// LOAD OBJETCTS
+
+var callbackWorld = function ( geometry, materials ) {
+  world3d = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial( materials ) );
+  world3d.position.y = 105;
+  world3d.position.x = 0;
+  world3d.castShadow = true;
+
+  stageContainer3d.add( world3d );
+};
+
+var callbackWinText = function ( geometry, materials ) {
+  winText3D = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial( materials ) );
+  winText3D.scale.x = 10;
+  winText3D.scale.y = 10;
+  winText3D.scale.z = 10;
+  winText3D.position.y = 1000;
+
+  stageContainer3d.add( winText3D );
+};
+
+var callbackLoseText = function ( geometry, materials ) {
+  loseText3D = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial( materials ) );
+  loseText3D.scale.x = 10;
+  loseText3D.scale.y = 10;
+  loseText3D.scale.z = 10;
+  loseText3D.position.y = 1000;
+
+  stageContainer3d.add( loseText3D );
+};
+
+
+var callbackSnowman = function ( geometry, materials ) {
+  showmanGeometry = geometry;
+  showmanMaterial = materials;
+
+  console.log(materials);
+};
+
+var callbackParavan = function ( geometry, materials ) {
+  paravan3D = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial( materials ) );
+  paravan3D.position.z = 1500;
+
+  scene.add( paravan3D );
+};
+
+$(document).ready(function() {
+  sprite1 = THREE.ImageUtils.loadTexture( "textures/snowflake1.png", null, preloader.listen());
+  sprite2 = THREE.ImageUtils.loadTexture( "textures/snowflake2.png", null, preloader.listen());
+  sprite3 = THREE.ImageUtils.loadTexture( "textures/snowflake3.png", null, preloader.listen());
+  sprite4 = THREE.ImageUtils.loadTexture( "textures/snowflake4.png", null, preloader.listen());
+  sprite5 = THREE.ImageUtils.loadTexture( "textures/snowflake5.png", null, preloader.listen());
+
+  var loader = new THREE.JSONLoader();
+  loader.load( "models/world.js", preloader.listen(callbackWorld), "textures");
+
+  loader = new THREE.JSONLoader();
+  loader.load( "models/win-text.js", preloader.listen(callbackWinText), "textures");
+
+  loader = new THREE.JSONLoader();
+  loader.load( "models/lose-text.js", preloader.listen(callbackLoseText), "textures");
+
+  loader = new THREE.JSONLoader();
+  loader.load("models/snowman1.js", preloader.listen(callbackSnowman), "textures");  
+
+  loader = new THREE.JSONLoader();
+  loader.load("models/paravan.js", preloader.listen(callbackParavan), "textures");
+});
 
 $(".gameWorld").append(renderer.domElement);
 
@@ -214,65 +268,7 @@ var addOrUpdate = function(playerData){
   }
 }
 
-// LOAD OBJETCTS
-
-var callbackWorld = function ( geometry, materials ) {
-  world3d = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial( materials ) );
-  world3d.position.y = 105;
-  world3d.position.x = 0;
-  world3d.castShadow = true;
-
-  stageContainer3d.add( world3d );
-};
-
-var loader = new THREE.JSONLoader();
-loader.load( "models/world.js", preloader.listen(callbackWorld), "textures");
-
-console.log("-1-");
-
-var winText3D;
-var loseText3D;
-
-var callbackWinText = function ( geometry, materials ) {
-  winText3D = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial( materials ) );
-  winText3D.scale.x = 10;
-  winText3D.scale.y = 10;
-  winText3D.scale.z = 10;
-  winText3D.position.y = 1000;
-
-  stageContainer3d.add( winText3D );
-};
-
-loader = new THREE.JSONLoader();
-loader.load( "models/win-text.js", preloader.listen(callbackWinText), "textures");
-
-console.log("-2-");
-
-var callbackLoseText = function ( geometry, materials ) {
-  loseText3D = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial( materials ) );
-  loseText3D.scale.x = 10;
-  loseText3D.scale.y = 10;
-  loseText3D.scale.z = 10;
-  loseText3D.position.y = 1000;
-
-  stageContainer3d.add( loseText3D );
-};
-
-loader = new THREE.JSONLoader();
-loader.load( "models/lose-text.js", preloader.listen(callbackLoseText), "textures");
-
-
-var callbackSnowman = function ( geometry, materials ) {
-  showmanGeometry = geometry;
-  showmanMaterial = materials;
-
-  console.log(materials);
-};
-
-loader = new THREE.JSONLoader();
-loader.load("models/snowman1.js", preloader.listen(callbackSnowman), "textures");
-
-var initAll =  function() {
+var startGame =  function() {
 
   initParticles();
 
@@ -297,10 +293,12 @@ var initAll =  function() {
   var socket = io.connect();
 
   socket.on("registered", function(){
+    console.log("-registered-");
     socket.emit("addPlayer");  
   });
 
   socket.on("addPlayer", function(playerData){
+    console.log("-addPlayer-");
     addOrUpdate(playerData);
   });
 
@@ -372,11 +370,23 @@ var initAll =  function() {
     socket.emit("directionChange", false, direction(e));
   });
 
+  camera.position.z = 1800;
+  camera.rotation.x = 0.01;
+  TweenLite.to(camera.position, 1.5, {z: 2600, ease: Cubic.easeInOut});
+  TweenLite.to(camera.rotation, 1.5, {x: 0, ease: Cubic.easeInOut});
+
+  TweenLite.to(paravan3D.scale, 1.5, {x: 500, y: 500, z: 500, ease: Cubic.easeInOut});
+
+  TweenLite.to($(".title"), 1, {css:{opacity:1}, delay: 1});
+  TweenLite.to($(".menu"), 1, {css:{opacity:1}, delay: 1});
 };
 
 var _self = this;
 
 preloader.complete = function() {
-  console.log("---ALL LOADED---");
-  initAll();
+  TweenLite.to($(".landingImg"), 1, {css:{opacity:0}, onComplete: function() {
+    $(".landingImg").hide();
+    startGame();    
+  }});
 }
+
