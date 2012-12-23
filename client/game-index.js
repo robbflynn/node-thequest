@@ -294,6 +294,8 @@ if (webgl) {
     }
 
     window.addEventListener( 'resize', onWindowResize, false );
+
+    onWindowResize();
     render();
 
     //var socket = io.connect();
