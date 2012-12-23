@@ -71,7 +71,7 @@ module.exports = function(data, scene, geometry, materials, light){
   this.model.scale.y = 0.000001;
   this.model.scale.z = 0.000001;
 
-  TweenLite.to(this.model.scale, 1, {x: 1, y: 1, z: 1, delay: 0.5, ease: Elastic.easeOut});
+  TweenLite.to(this.model.scale, 1, {x: 1, y: 1, z: 1, ease: Elastic.easeOut});
 }
 
 _.extend(module.exports.prototype, {

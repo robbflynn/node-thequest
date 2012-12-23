@@ -298,93 +298,93 @@ if (webgl) {
     onWindowResize();
     render();
 
-    //var socket = io.connect();
-    var socket = io.connect(require("config").socketio);
-
-    socket.on("registered", function(){
-      console.log("-registered-");
-      socket.emit("addPlayer");  
-    });
-
-    socket.on("addPlayer", function(playerData){
-      console.log("-addPlayer-");
-      addOrUpdate(playerData);
-    });
-
-    socket.on("removePlayer", function(playerData){
-      var p = getPlayerById(playerData.playerId);
-      players.splice(players.indexOf(p), 1);
-      p.remove();
-    });
-
-    socket.on("updateGame", function (gameState) {
-      $(".timeLeft").html("Time left:"+gameState.timeLeft);
-      //expect playerStates to be an array
-      for (var i = 0; i < gameState.players.length; i ++) {
-        addOrUpdate(gameState.players[i]);
-      }
-    });
-
-    socket.on("treasureTrapped", function(p1Data, p2Data){
-      _.extend(getPlayerById(p1Data.playerId), p1Data).render();
-      if(p2Data)
-        _.extend(getPlayerById(p2Data.playerId), p2Data).render();
-    })
-
-    socket.on("endgame", function (victory) {
-      if (victory)
-        TweenLite.to(winText3D.position, 1.5, {y: 10, ease: Bounce.easeOut});
-      else
-        TweenLite.to(loseText3D.position, 1.5, {y: 10, ease: Bounce.easeOut});
-
-      var player = getPlayerByUsername(user.username);
-      player.victories += victory ? 1 : 0;
-
-      $(".victoriesCount").html(player.victories);
-    })
-
-    socket.on("restart", function(){
-      TweenLite.to(winText3D.position, 1, {y: 1000, ease: Cubic.easeIn});
-      TweenLite.to(loseText3D.position, 1, {y: 1000, ease: Cubic.easeIn});
-
-      for (var i = 0;i < players.length;i ++)
-        gameContainer3d.remove(players[i].model);
-
-      players = [];
-      socket.emit("addPlayer");
-    });
-
-    var direction = function (e) {
-      var dir = "";
-      
-      if(e.keyCode == 37)
-        dir = "left"
-      if(e.keyCode == 39)
-        dir = "right";
-      if(e.keyCode == 40)
-        dir = "bottom";
-      if(e.keyCode == 38)
-        dir = "top";
-      
-      return dir;
-    }
-
-    $(window).on("keydown", function(e){
-      e.preventDefault();
-      socket.emit("directionChange", true, direction(e));
-    });
-
-    $(window).on("keyup", function(e){
-      e.preventDefault();
-      socket.emit("directionChange", false, direction(e));
-    });
-
     camera.position.z = 1800;
     camera.rotation.x = 0.01;
     TweenLite.to(camera.position, 1, {z: 2600, delay: 0.2, ease: Cubic.easeInOut});
     TweenLite.to(camera.rotation, 1, {x: 0, delay: 0.2, ease: Cubic.easeInOut});
 
-    TweenLite.to(paravan3D.scale, 1, {x: 600, y: 600, z: 600, delay: 0.2, ease: Cubic.easeInOut});
+    TweenLite.to(paravan3D.scale, 1, {x: 600, y: 600, z: 600, delay: 0.2, ease: Cubic.easeInOut, onComplete: function() {
+      
+      var socket = io.connect(require("config").socketio);
+
+      socket.on("registered", function(){
+        console.log("-registered-");
+        socket.emit("addPlayer");  
+      });
+
+      socket.on("addPlayer", function(playerData){
+        console.log("-addPlayer-");
+        addOrUpdate(playerData);
+      });
+
+      socket.on("removePlayer", function(playerData){
+        var p = getPlayerById(playerData.playerId);
+        players.splice(players.indexOf(p), 1);
+        p.remove();
+      });
+
+      socket.on("updateGame", function (gameState) {
+        $(".timeLeft").html("Time left:"+gameState.timeLeft);
+        //expect playerStates to be an array
+        for (var i = 0; i < gameState.players.length; i ++) {
+          addOrUpdate(gameState.players[i]);
+        }
+      });
+
+      socket.on("treasureTrapped", function(p1Data, p2Data){
+        _.extend(getPlayerById(p1Data.playerId), p1Data).render();
+        if(p2Data)
+          _.extend(getPlayerById(p2Data.playerId), p2Data).render();
+      })
+
+      socket.on("endgame", function (victory) {
+        if (victory)
+          TweenLite.to(winText3D.position, 1.5, {y: 10, ease: Bounce.easeOut});
+        else
+          TweenLite.to(loseText3D.position, 1.5, {y: 10, ease: Bounce.easeOut});
+
+        var player = getPlayerByUsername(user.username);
+        player.victories += victory ? 1 : 0;
+
+        $(".victoriesCount").html(player.victories);
+      })
+
+      socket.on("restart", function(){
+        TweenLite.to(winText3D.position, 1, {y: 1000, ease: Cubic.easeIn});
+        TweenLite.to(loseText3D.position, 1, {y: 1000, ease: Cubic.easeIn});
+
+        for (var i = 0;i < players.length;i ++)
+          gameContainer3d.remove(players[i].model);
+
+        players = [];
+        socket.emit("addPlayer");
+      });
+
+      var direction = function (e) {
+        var dir = "";
+        
+        if(e.keyCode == 37)
+          dir = "left"
+        if(e.keyCode == 39)
+          dir = "right";
+        if(e.keyCode == 40)
+          dir = "bottom";
+        if(e.keyCode == 38)
+          dir = "top";
+        
+        return dir;
+      }
+
+      $(window).on("keydown", function(e){
+        e.preventDefault();
+        socket.emit("directionChange", true, direction(e));
+      });
+
+      $(window).on("keyup", function(e){
+        e.preventDefault();
+        socket.emit("directionChange", false, direction(e));
+      });
+    }});
 
     TweenLite.to($(".title"), 1, {css:{opacity:1}, delay: 1.2});
     TweenLite.to($(".menu"), 1, {css:{opacity:1}, delay: 1.2});
