@@ -65,15 +65,16 @@ a {
   z-index: 100;
 }
 
-.support {
-  color: #FFFFFF;
-  top: 600px;
-  left: 270px;
-  margin: 0 auto;
-  position: absolute;
-}
-
 .menuItem {
   float:left;
   width: 100px;
+}
+
+.support {
+  color: #FFFFFF;
+  top: 600px;
+  left: 120px;
+  margin: 0 auto;
+  position: absolute;
+  text-align: center;
 }
