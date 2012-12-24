@@ -15,14 +15,12 @@ module.exports = function(data, scene, geometry, materials, light, marker, sound
   for (var s in materials) {
     if (materials[s].name == "02___Default"){
       
-
       var n = materials[s].name;
 
       materials[s] = new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } );
       materials[s].name = n;
     }
   }
-      
 
   this.body = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial( materials ));
   this.body.material.ambient = this.body.material.color;

@@ -409,6 +409,7 @@ if (webgl) {
       })
 
       socket.on("endgame", function (victory) {
+        console.log("-----endgame:", victory);
         if (victory) {
           if (sounds.enabled)
             sounds.win[rand(0,sounds.win.length)].play();
