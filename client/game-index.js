@@ -41,7 +41,7 @@ var sounds = {
   enabled: true,
   trapped: new Audio("sounds/trap.wav"),
   start: new Audio("sounds/start.wav"),
-  song1: new Audio("sounds/song1.mp3"),
+  song1: new Audio("sounds/song1.wav"),
   win: [
     new Audio("sounds/yahoo1.wav"),
     new Audio("sounds/yahoo2.wav"),
