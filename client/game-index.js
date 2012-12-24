@@ -60,8 +60,6 @@ sounds.song1.loop = true;
 
 var webgl = ( function () { try { return !! window.WebGLRenderingContext && !! document.createElement( 'canvas' ).getContext( 'experimental-webgl' ); } catch( e ) { return false; } } )();
 
-console.log("Detector", webgl);
-
 if (webgl) {
   var ww = window.innerWidth;
   var hh = window.innerHeight;
@@ -323,16 +321,13 @@ if (webgl) {
   $(".gameWorld").append(renderer.domElement);
 
   var addOrUpdate = function(playerData){
-    var player = playersById[playerData.playerId]; // getPlayerById(playerData.playerId);
+    var player = playersById[playerData.playerId];
     if(!player) {
       var index = totalPlayers - parseInt(totalPlayers / snowmans.length) * snowmans.length;
 
-
-      console.log("1.addOrUpdate:", index);
-
       var g = snowmans[index].geometry;
       var m = snowmans[index].materials;
-      console.log("2.addOrUpdate:", g, m);
+      
       player = new Player(playerData, gameContainer3d, g, m, light2, marker3D, sounds);
 
       totalPlayers ++;
@@ -381,17 +376,15 @@ if (webgl) {
       var socket = io.connect(require("config").socketio);
 
       socket.on("registered", function(){
-        console.log("-registered-");
         socket.emit("addPlayer");  
       });
 
       socket.on("addPlayer", function(playerData){
-        console.log("-addPlayer-");
         addOrUpdate(playerData);
       });
 
       socket.on("removePlayer", function(playerData){
-        var p = playersById[playerData.playerId]; //getPlayerById(playerData.playerId);
+        var p = playersById[playerData.playerId];
 
         totalPlayers --;
 
@@ -504,7 +497,6 @@ if (webgl) {
   }
 
 } else {
-  console.log("-SHIT-");
   $(".support").show();
   $(".loadingTxt").hide();
 }
