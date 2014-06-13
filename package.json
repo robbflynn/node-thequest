@@ -7,14 +7,14 @@
   },
   "dependencies": {
     "express": "3.0.0rc5",
-    "jade": "*",
-    "socket.io": "*",
-    "socket.io-client": "*",
-    "connect-mongo": "*",
-    "session.socket.io": "*",
-    "browserify": "*",
-    "underscore": "*",
-    "mongoose": "*"
+    "jade": "0.27.7",
+    "socket.io": "0.9.13",
+    "socket.io-client": "0.9.11",
+    "connect-mongo": "0.2.0",
+    "session.socket.io": "0.1.3",
+    "browserify": "1.16.6",
+    "underscore": "1.4.3",
+    "mongoose": "3.5.2"
   },
   "devDependencies": {
     "jasmine-node": "*",
