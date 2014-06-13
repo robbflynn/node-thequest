@@ -1,10 +1,87 @@
 body {
+  background-color: #000000 !important;
   padding: 0px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   overflow: hidden;
   position: absolute;
   width: 100%;
   height: 100%;
+}
+
+.content-container {
+  background: url("../landing.jpg") no-repeat;
+  background-position: 50% 100%;
+  text-align: center;
+  width: 100%;
+  min-height: 595px;
+}
+
+.login-content {
+  position: relative;
+  text-align:center;
+  top: 420px;
+}
+
+.login-logo {
+  padding-top: 74px;
+  padding-bottom: 10px;
+}
+
+.login-input {
+  background-color: #ffffff !important;
+  width: 235px;
+  padding: 10px !important;
+  border: none !important;
+  border-radius: 10px !important;
+
+}
+
+.login-slogon {
+  color: #D6D8D1;
+  font-size: 14px;
+  padding-bottom: 44px;
+}
+
+.login-controls {
+  padding-top: 42px;
+  margin: 0px;
+}
+
+.login-controls li {
+  display: inline;  
+}
+
+.login-or {
+  font-size: 14px;
+  color: #848484;
+  margin-left: 35px;
+  margin-right: 35px;
+}
+
+.login-button {
+  background-color: #B30000;
+  width: 85px;
+  height: 39px;
+  border: none;
+  color: #FFFFFF;
+  border-radius: 10px;
+}
+
+.login-version {
+  color: #0088cc;
+  font-size: 12px;
+  padding-top: 34px;
+}
+
+.links-content {
+  position: relative;
+  text-align:center;
+  top: 500px;
+}
+
+.created-by {
+  color: #C1C4B9;
+  margin-top: 40px;
 }
 
 .title {

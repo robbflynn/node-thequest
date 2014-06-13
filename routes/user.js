@@ -4,7 +4,7 @@ module.exports = {
   root: "/users",
   "GET /logout": function(req, res) {
     req.session.destroy();
-    res.redirect("/users/login");
+    res.redirect("/");
   },
   "GET /login": function(req, res) {
     res.render('user/login', { title: 'Thequest login', error: null });  
@@ -15,7 +15,7 @@ module.exports = {
         req.session.userId = user.id;
         res.redirect("/game")
       } else
-        res.render("user/login", { title: 'Thequest login', error: 'invalid user'})
+        res.render("/", { title: 'Thequest login', error: 'invalid user'})
     });
   },
   "GET /register": function(req, res) {
@@ -27,7 +27,7 @@ module.exports = {
         req.session.userId = user.id;
         res.redirect("/game");
       } else
-        res.render("user/register", { title: "Thequest register", error: err});
+        res.render("/", { title: "Thequest register", error: err});
     })
   }
 }
